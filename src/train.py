@@ -48,7 +48,7 @@ def train_skipgram(model: SkipGramNeg,
             # input, output, and noise vectors
             input_vectors = model.forward_input(inputs)
             output_vectors = model.forward_output(targets)
-            noise_vectors = model.forward_noise(batch_size, window_size)
+            noise_vectors = model.forward_noise(len(input_vectors), window_size)
             
             # negative sampling loss
             loss = criterion(input_vectors, output_vectors, noise_vectors)

@@ -69,10 +69,13 @@ def subsample_words(words: List[str], vocab_to_int: Dict[str, int], threshold: f
         Dict[str, float]: Dictionary associating each word with its frequency.
     """
     # Convert words to integers
-    int_words = [vocab_to_int[word] for word in words]
-    freqs: Dict[str, float] = Counter(int_words)
-    freqs: Dict[int, float] = {word_int: (1 - torch.sqrt(torch.tensor(threshold/(freq)))) for word_int, freq in freqs.items()}
-    train_words: List[int] = [word_int for word_int, freq in freqs.items() if freq < threshold]
+    int_words: List[int] = [vocab_to_int[word] for word in words]
+    
+    count = Counter(int_words)
+    total_words = sum(count.values())
+    freqs: Dict[str, float] =  {word: count[word] for word in count} 
+    probs = {word : 1-torch.sqrt(torch.tensor(threshold/(freqs[word]/total_words))) for word in freqs.keys()}
+    train_words: List[int] =[word for word in int_words if 0.5 < probs[word]]
 
     return train_words, freqs
 
